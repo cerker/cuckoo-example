@@ -37,10 +37,9 @@
                     <h:panelGroup/>
 
                     <h:outputLabel value="Max Rows: " for="MaxRows"/>
-                    <h:inputText id="MaxRows" value="#{customerSearch.maxRows}" maxlength="4"
-                                 required="true" requiredMessage="Value is required">
+                    <h:inputText id="MaxRows" value="#{customerSearch.maxRows}" maxlength="4">
                         <f:validateLongRange minimum="1" maximum="5000"/>
-                        <rich:validator/>
+                        <f:validateRequired/>
                     </h:inputText>
                     <rich:message for="MaxRows"/>
 
@@ -116,12 +115,14 @@
                     </a4j:commandLink>
                 </rich:column>
             </rich:dataTable>
+        </h:form>
+        
+        <rich:popupPanel header="Edit Customer Data"
+                         id="editPane"
+                         domElementAttachment="parent"
+                         width="400" height="400">
 
-            <rich:popupPanel header="Edit Customer Data"
-                             id="editPane"
-                             domElementAttachment="parent"
-                             width="400" height="400">
-
+            <h:form id="CustomerEdit">
                 <h:panelGrid columns="3" id="editGrid">
                     <h:outputText value="Customer Number"/>
                     <h:inputText value="#{customerEdit.customer.id}" readonly="true" required="true"/>
@@ -170,8 +171,8 @@
                                    oncomplete="if (#{facesContext.maximumSeverity.ordinal lt 2}) {#{rich:component('editPane')}.hide();}"/>
 
                 <a4j:commandButton value="Cancel" onclick="#{rich:component('editPane')}.hide(); return false;"/>
-            </rich:popupPanel>
-        </h:form>
+            </h:form>
+        </rich:popupPanel>
 
         <rich:jQuery selector=".stable tr:odd" query="addClass('odd-row')"/>
         <rich:jQuery selector=".stable tr:even" query="addClass('even-row')"/>
