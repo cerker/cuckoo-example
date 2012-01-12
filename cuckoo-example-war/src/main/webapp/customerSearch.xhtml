@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j">
+
+<body>
+<ui:composition template="/templates/template.xhtml">
+
+    <h:outputStylesheet>
+        .even-row {
+            background-color: #FCFFFE;
+        }
+
+        .odd-row {
+            background-color: #ECF3FE;
+        }
+
+        .active-row {
+            background-color: #FFEBDA !important;
+            cursor: pointer;
+        }
+    </h:outputStylesheet>
+
+
+    <ui:define name="title">Customers</ui:define>
+
+    <ui:define name="body">
+        <rich:panel header="Customer Search" style="width:300px">
+            <h:form prependId="false">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Customer Name Pattern: " for="CustomerName"/>
+                    <h:inputText id="CustomerName" value="#{customerSearch.namePattern}"/>
+
+                    <h:outputLabel value="Max Rows: " for="MaxRows"/>
+                    <h:inputText id="MaxRows" value="#{customerSearch.maxRows}" maxlength="4" required="true">
+                        <f:validateLongRange minimum="1" maximum="5000"/>
+                        <!--<f:validateRequired/>-->
+                        <rich:validator/>
+                    </h:inputText>
+
+                    <h:commandButton id="SearchButton"
+                                     action="#{customerSearch.search}"
+                                     value="Search"/>
+                </h:panelGrid>
+                <br/>
+                <rich:messages/>
+            </h:form>
+        </rich:panel>
+
+        <br/>
+
+        <h:form id="customerResult" prependId="false">
+            <rich:dataTable id="CustomerTable" var="customer"
+                            iterationStatusVar="it"
+                            value="#{customerList.customers}"
+                            rowClasses="odd-row, even-row"
+                            styleClass="stable"
+                            width="800px">
+
+                <rich:column>
+                    <f:facet name="header">Customer Number</f:facet>
+                    <h:outputText value="#{customer.id}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Name</f:facet>
+                    <h:outputText value="#{customer.name}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Form of Address</f:facet>
+                    <h:outputText value="#{customer.formOfAddress}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Street</f:facet>
+                    <h:outputText value="#{customer.street}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">P.O. Box</f:facet>
+                    <h:outputText value="#{customer.poBox}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Postal Code</f:facet>
+                    <h:outputText value="#{customer.postalCode}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">City</f:facet>
+                    <h:outputText value="#{customer.city}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Country</f:facet>
+                    <h:outputText value="#{customer.countryKeyIso}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Region</f:facet>
+                    <h:outputText value="#{customer.region}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Phone Number</f:facet>
+                    <h:outputText value="#{customer.phoneNumber}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Email Address</f:facet>
+                    <h:outputText value="#{customer.email}"/>
+                </rich:column>
+                <rich:column>
+                    <f:facet name="header">Edit</f:facet>
+                    <a4j:commandLink styleClass="no-decor" render="editGrid" execute="@this"
+                                     oncomplete="#{rich:component('editPane')}.show()">
+                        <h:graphicImage value="/icons/edit.gif" alt="edit"/>
+                        <f:setPropertyActionListener target="#{customerEdit.customer}" value="#{customer}"/>
+                    </a4j:commandLink>
+                </rich:column>
+            </rich:dataTable>
+
+            <rich:jQuery selector=".stable tr:odd" query="addClass('odd-row')"/>
+            <rich:jQuery selector=".stable tr:even" query="addClass('even-row')"/>
+            <rich:jQuery selector=".stable tr" event="mouseover" query="jQuery(this).addClass('active-row')"/>
+            <rich:jQuery selector=".stable tr" event="mouseout" query="jQuery(this).removeClass('active-row')"/>
+
+            <rich:popupPanel header="Edit Customer Data"
+                             id="editPane"
+                             domElementAttachment="parent"
+                             width="400" height="400">
+
+                <h:panelGrid columns="3" id="editGrid">
+                    <h:outputText value="Customer Number"/>
+                    <h:inputText value="#{customerEdit.customer.id}" readonly="true"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Name"/>
+                    <h:inputText value="#{customerEdit.customer.name}"
+                                 required="true" requiredMessage="VIN is required">
+                    </h:inputText>
+                    <h:panelGroup/>
+                    <h:outputText value="Form Of Address"/>
+                    <h:inputText value="#{customerEdit.customer.formOfAddress}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Street"/>
+                    <h:inputText value="#{customerEdit.customer.street}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="P.O. Box"/>
+                    <h:inputText value="#{customerEdit.customer.poBox}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Postal Code"/>
+                    <h:inputText value="#{customerEdit.customer.postalCode}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="City"/>
+                    <h:inputText value="#{customerEdit.customer.city}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Country"/>
+                    <h:inputText value="#{customerEdit.customer.countryKeyIso}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Region"/>
+                    <h:inputText value="#{customerEdit.customer.region}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Phone Number"/>
+                    <h:inputText value="#{customerEdit.customer.phoneNumber}"/>
+                    <h:panelGroup/>
+                    <h:outputText value="Email Address"/>
+                    <h:inputText id="Email" value="#{customerEdit.customer.email}"
+                                 validatorMessage="Not a valid email address">
+                        <f:validateRegex pattern="^.+@.+\..+"/>
+                    </h:inputText>
+                    <rich:message id="EmailMsg" for="Email"/>
+                </h:panelGrid>
+                
+                <h:commandButton value="Store"
+                                   action="#{customerEdit.store}"
+                                   render="CustomerTable"
+                                   execute="editPane"
+                                   oncomplete="if ('#{facesContext.maximumSeverity==null}') {'#{rich:component('editPane')}'.hide(); return true;}"/>
+                <h:commandButton value="Cancel" onclick="#{rich:component('editPane')}.hide(); return false;"/>
+            </rich:popupPanel>
+        </h:form>
+    </ui:define>
+</ui:composition>
+</body>
+</html>
