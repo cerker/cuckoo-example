@@ -2,7 +2,7 @@ package de.akquinet.jbosscc.cuckoo.example.ejb;
 
 import de.akquinet.jbosscc.cuckoo.example.model.Customer;
 import de.akquinet.jbosscc.cuckoo.example.model.CustomerSearchResult;
-import de.akquinet.jbosscc.cuckoo.example.model.CustomerStoreResult;
+import de.akquinet.jbosscc.cuckoo.example.model.ReturnMessages;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -41,7 +41,7 @@ public class CustomerServiceBean implements CustomerService
             // Actually call the SAP remote function module
             MappedRecord output = ( MappedRecord ) interaction.execute( null, input );
 
-            // Read in the necessary data that was returned by the function module
+            // Read in the data that was returned by the function module
             CustomerSearchResult result = new CustomerSearchResult();
 
             IndexedRecord returnTable = ( IndexedRecord ) output.get( "RETURN" );
@@ -85,7 +85,7 @@ public class CustomerServiceBean implements CustomerService
         }
     }
 
-    public CustomerStoreResult store( Customer customer )
+    public ReturnMessages store( Customer customer )
     {
         LOGGER.info( "Storing customer " + customer );
 
@@ -132,13 +132,15 @@ public class CustomerServiceBean implements CustomerService
             MappedRecord output = ( MappedRecord ) interaction.execute( null, input );
 
             // Read in the necessary data that was returned by the function module
-            CustomerStoreResult result = new CustomerStoreResult();
+            ReturnMessages result = new ReturnMessages();
 
             IndexedRecord returnTable = ( IndexedRecord ) output.get( "RETURN" );
             for ( Object row : returnTable )
             {
                 MappedRecord record = ( MappedRecord ) row;
-                result.addReturnMessage( ( String ) record.get( "MESSAGE" ) );
+                String message = ( String ) record.get( "MESSAGE" );
+                String type = ( String ) record.get( "TYPE" );
+                result.addReturnMessage( message, ReturnMessages.Severity.fromSapType( type.charAt( 0 ) ) );
             }
 
             return result;

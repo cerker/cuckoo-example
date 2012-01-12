@@ -1,53 +1,55 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:rich="http://richfaces.org/rich"
-      xmlns:a4j="http://richfaces.org/a4j">
-
-<body>
-<ui:composition template="/templates/template.xhtml">
-
-    <h:outputStylesheet>
-        .even-row {
-            background-color: #FCFFFE;
-        }
-
-        .odd-row {
-            background-color: #ECF3FE;
-        }
-
-        .active-row {
-            background-color: #FFEBDA !important;
-            cursor: pointer;
-        }
-    </h:outputStylesheet>
-
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                template="/templates/template.xhtml">
 
     <ui:define name="title">Customers</ui:define>
 
     <ui:define name="body">
-        <rich:panel header="Customer Search" style="width:300px">
+
+        <h:outputStylesheet target="head">
+            .even-row {
+                background-color: #FCFFFE;
+            }
+
+            .odd-row {
+                background-color: #ECF3FE;
+            }
+
+            .active-row {
+                background-color: #FFEBDA !important;
+                cursor: pointer;
+            }
+        </h:outputStylesheet>
+
+        <rich:panel header="Customer Search" style="width:400px">
             <h:form prependId="false">
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="3"
+                             title="Customer Name Pattern: Case-sensitive, Wildcards: * and ?; Max. Rows: A value between 1 and 5000">
+
                     <h:outputLabel value="Customer Name Pattern: " for="CustomerName"/>
                     <h:inputText id="CustomerName" value="#{customerSearch.namePattern}"/>
+                    <h:panelGroup/>
 
                     <h:outputLabel value="Max Rows: " for="MaxRows"/>
-                    <h:inputText id="MaxRows" value="#{customerSearch.maxRows}" maxlength="4" required="true">
+                    <h:inputText id="MaxRows" value="#{customerSearch.maxRows}" maxlength="4"
+                                 required="true" requiredMessage="Value is required">
                         <f:validateLongRange minimum="1" maximum="5000"/>
-                        <!--<f:validateRequired/>-->
                         <rich:validator/>
                     </h:inputText>
+                    <rich:message for="MaxRows"/>
 
-                    <h:commandButton id="SearchButton"
-                                     action="#{customerSearch.search}"
-                                     value="Search"/>
                 </h:panelGrid>
-                <br/>
-                <rich:messages/>
+                <h:commandButton id="SearchButton"
+                                 action="#{customerSearch.search}"
+                                 value="Search"/>
+                <br/><br/>
+                <rich:messages globalOnly="true"/>
             </h:form>
         </rich:panel>
 
@@ -115,11 +117,6 @@
                 </rich:column>
             </rich:dataTable>
 
-            <rich:jQuery selector=".stable tr:odd" query="addClass('odd-row')"/>
-            <rich:jQuery selector=".stable tr:even" query="addClass('even-row')"/>
-            <rich:jQuery selector=".stable tr" event="mouseover" query="jQuery(this).addClass('active-row')"/>
-            <rich:jQuery selector=".stable tr" event="mouseout" query="jQuery(this).removeClass('active-row')"/>
-
             <rich:popupPanel header="Edit Customer Data"
                              id="editPane"
                              domElementAttachment="parent"
@@ -127,13 +124,13 @@
 
                 <h:panelGrid columns="3" id="editGrid">
                     <h:outputText value="Customer Number"/>
-                    <h:inputText value="#{customerEdit.customer.id}" readonly="true"/>
+                    <h:inputText value="#{customerEdit.customer.id}" readonly="true" required="true"/>
                     <h:panelGroup/>
                     <h:outputText value="Name"/>
-                    <h:inputText value="#{customerEdit.customer.name}"
+                    <h:inputText value="#{customerEdit.customer.name}" id="Name"
                                  required="true" requiredMessage="VIN is required">
                     </h:inputText>
-                    <h:panelGroup/>
+                    <rich:message id="NameMsg" for="Name"/>
                     <h:outputText value="Form Of Address"/>
                     <h:inputText value="#{customerEdit.customer.formOfAddress}"/>
                     <h:panelGroup/>
@@ -165,16 +162,21 @@
                     </h:inputText>
                     <rich:message id="EmailMsg" for="Email"/>
                 </h:panelGrid>
-                
-                <h:commandButton value="Store"
-                                   action="#{customerEdit.store}"
-                                   render="CustomerTable"
+
+                <rich:messages globalOnly="true"/>
+
+                <a4j:commandButton value="Store" action="#{customerEdit.store}" render="CustomerTable"
                                    execute="editPane"
-                                   oncomplete="if ('#{facesContext.maximumSeverity==null}') {'#{rich:component('editPane')}'.hide(); return true;}"/>
-                <h:commandButton value="Cancel" onclick="#{rich:component('editPane')}.hide(); return false;"/>
+                                   oncomplete="if (#{facesContext.maximumSeverity.ordinal lt 2}) {#{rich:component('editPane')}.hide();}"/>
+
+                <a4j:commandButton value="Cancel" onclick="#{rich:component('editPane')}.hide(); return false;"/>
             </rich:popupPanel>
         </h:form>
+
+        <rich:jQuery selector=".stable tr:odd" query="addClass('odd-row')"/>
+        <rich:jQuery selector=".stable tr:even" query="addClass('even-row')"/>
+        <rich:jQuery selector=".stable tr" event="mouseover" query="jQuery(this).addClass('active-row')"/>
+        <rich:jQuery selector=".stable tr" event="mouseout" query="jQuery(this).removeClass('active-row')"/>
+
     </ui:define>
 </ui:composition>
-</body>
-</html>
