@@ -18,15 +18,22 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.richfaces.bom.version>4.1.0.Final</org.richfaces.bom.version>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <repositories>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>Jboss Repository for Maven</name>
-            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-        </repository>
         <repository>
             <id>java-net</id>
             <name>Java.net Maven Repository</name>
@@ -36,6 +43,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- project dependencies-->
             <dependency>
                 <groupId>de.akquinet.jbosscc</groupId>
                 <artifactId>cuckoo-example-datamodel</artifactId>
@@ -46,6 +54,8 @@
                 <artifactId>cuckoo-example-ejb</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
+
+            <!-- Java EE APIs -->
             <dependency>
                 <groupId>org.jboss.spec.javax.ejb</groupId>
                 <artifactId>jboss-ejb-api_3.1_spec</artifactId>
@@ -61,10 +71,12 @@
                 <artifactId>connector-api</artifactId>
                 <version>1.5</version>
             </dependency>
+
+            <!-- Rich Faces -->
             <dependency>
                 <groupId>org.richfaces</groupId>
                 <artifactId>richfaces-bom</artifactId>
-                <version>${org.richfaces.bom.version}</version>
+                <version>4.1.0.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
